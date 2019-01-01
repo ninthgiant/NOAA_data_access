@@ -1,4 +1,4 @@
-############
+############ NOAA_Data_Access_12_15_18.R
 #
 #     Work with NOAA datasets - Dec. 11, 2018
 #        Source for noaa online access: https://www.ncdc.noaa.gov/cdo-web/
@@ -64,4 +64,28 @@ myDate = b44008$data$time[1]
 
 # here is what data look like in this file: 2010-05-15T15:50:00Z
 
+## lubridate functions that might workj
+parse_date_time(res1$data$time)
+parse_date_time(myDate, "YmdHMS")
+myNewDate <- parse_date_time(myDate, "YmdHMS")
+myAsDate <- as_datetime(myNewDate)
 
+
+## try to make a new field with only the date - this works
+##   keep the entire date time string - you can then query on the date par of this. see below
+res1$data$theDate <- as_datetime(res1$data$time)
+head(res1$data)
+
+### now see if you can easily subeset it - this works
+date1 <- as.Date("2010-05-15")
+date2 <- as.Date("2010-05-19")
+res1_span <- res1$data[res1$data$theDate >= date1 & res1$data$theDate <= date2,]
+View(res1_span)
+
+### here is another span of time that should be rbinded to the other
+date1 <- as.Date("2010-06-15")
+date2 <- as.Date("2010-06-19")
+res2_span <- res1$data[res1$data$theDate >= date1 & res1$data$theDate <= date2,]
+View(res2_span)
+
+new_span <- rbind(res1_span, res2_span)
